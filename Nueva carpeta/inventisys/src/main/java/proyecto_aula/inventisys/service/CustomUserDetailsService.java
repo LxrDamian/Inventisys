@@ -1,6 +1,5 @@
 package proyecto_aula.inventisys.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import proyecto_aula.inventisys.model.User;
 import proyecto_aula.inventisys.repository.UserRepository;
-
 
 import java.util.stream.Collectors;
 
@@ -27,9 +25,16 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getCorreo())
                 .password(user.getPassword())
-                .authorities(user.getRoles().stream()
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList()))
+                .authorities(
+                        user.getRoles().stream()
+                                // Role.ADMIN / Role.USER  ->  "ROLE_ADMIN" / "ROLE_USER"
+                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                                .collect(Collectors.toList())
+                )
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
                 .build();
     }
 }

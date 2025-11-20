@@ -1,6 +1,5 @@
 package proyecto_aula.inventisys.config;
 
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -21,7 +21,8 @@ public class JwtTokenProvider {
     private long expiration;
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = secret.getBytes();
+        // Usar UTF-8 explícitamente evita errores en Linux/Docker
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -32,10 +33,12 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("roles", userDetails.getAuthorities())
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())
                 .compact();
+
     }
 
     public String getUsernameFromToken(String token) {
@@ -44,6 +47,7 @@ public class JwtTokenProvider {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+
         return claims.getSubject();
     }
 
@@ -54,9 +58,19 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+
+        } catch (ExpiredJwtException e) {
+            System.out.println(" Token expirado");
+        } catch (UnsupportedJwtException e) {
+            System.out.println(" Token no soportado");
+        } catch (MalformedJwtException e) {
+            System.out.println(" Token mal formado");
+        } catch (SecurityException e) {
+            System.out.println(" Firma JWT inválida");
+        } catch (Exception e) {
+            System.out.println(" Error validando token: " + e.getMessage());
         }
+
+        return false;
     }
 }
-

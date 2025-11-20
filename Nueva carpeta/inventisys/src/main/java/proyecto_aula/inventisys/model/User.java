@@ -7,9 +7,11 @@ import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.Set;
 
+
 @Data
 @Document(collection = "users")
 public class User {
+
     @Id
     private String id;
 
@@ -20,6 +22,7 @@ public class User {
 
     private String password;
 
-    private Set<String> roles;
+    private Set<Role> roles;
 }
+
 

@@ -4,6 +4,7 @@ package proyecto_aula.inventisys.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import proyecto_aula.inventisys.model.Role;
 import proyecto_aula.inventisys.model.User;
 import proyecto_aula.inventisys.repository.UserRepository;
 
@@ -19,15 +20,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User registerUser(String nombre, String correo, String password) {
-        if (userRepository.existsByCorreo(correo)) {
-            throw new RuntimeException("El correo ya está registrado");
-        }
-
         User user = new User();
         user.setNombre(nombre);
         user.setCorreo(correo);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(Set.of("USER"));
+
+
+
+        user.setRoles(Set.of(Role.USER));
 
         return userRepository.save(user);
     }
