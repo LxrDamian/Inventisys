@@ -9,7 +9,7 @@ export const Producto = () => {
 
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { hasRole } = useAuth();  // ⬅️ IMPORTANTE
+  const { hasRole } = useAuth();  
 
   const { createPurchase } = usePurchases();
   const [showBuyModal, setShowBuyModal] = useState(false);
