@@ -39,10 +39,10 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        // 🔓 Login, registro, refresh token
+
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // 📦 Productos — MATCH CON TU PRODUCTCONTROLLER
+
                         .requestMatchers(HttpMethod.GET, "/api/products/**")
                         .hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/api/products/**")
