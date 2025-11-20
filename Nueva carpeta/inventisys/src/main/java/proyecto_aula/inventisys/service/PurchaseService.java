@@ -21,11 +21,9 @@ public class PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final ProductService productService;
     private final UserRepository userRepository;
-    private final CartService cartService; // 👈 NUEVO: para leer/vaciar carrito
+    private final CartService cartService;
 
-    /**
-     * Compra de un solo producto (lo que ya tenías).
-     */
+
     public Purchase createPurchase(String correoCliente, String productId, Integer cantidad) {
         User user = userRepository.findByCorreo(correoCliente)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -45,14 +43,12 @@ public class PurchaseService {
         purchase.setTotal(product.getPrecio() * cantidad);
         purchase.setFechaHora(LocalDateTime.now());
 
-        // Descontar stock
         productService.updateStock(productId, cantidad);
 
         return purchaseRepository.save(purchase);
     }
 
     public List<Purchase> checkoutCart(String correoCliente) {
-        // El CartService está diseñado para identificar al carrito por userId/correo
         Cart cart = cartService.getCartForUser(correoCliente);
 
         if (cart.getItems() == null || cart.getItems().isEmpty()) {

@@ -28,7 +28,7 @@ public class CartController {
 
     private String getCurrentUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getName(); // correo del usuario
+        return auth.getName();
     }
 
     @GetMapping
